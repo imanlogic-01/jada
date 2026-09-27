@@ -30,6 +30,7 @@ export function Sidebar({ newBookings, signOut }: { newBookings: number; signOut
               Booking requests {newBookings > 0 && <span className="adm-badge" aria-label={`${newBookings} new`}>{newBookings}</span>}
             </>,
           )}
+          {link('/admin/gallery', 'Gallery')}
           {link('/admin/journal', 'Journal')}
           {link('/admin/seo', 'SEO & sharing')}
         </div>

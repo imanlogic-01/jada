@@ -11,6 +11,8 @@ const nextConfig: NextConfig = {
       supabase
         ? { protocol: supabase.protocol.replace(':', '') as 'http' | 'https', hostname: supabase.hostname, port: supabase.port, pathname: '/storage/v1/object/public/**' }
         : { protocol: 'https', hostname: '**.supabase.co', pathname: '/storage/v1/object/public/**' },
+      // YouTube thumbnails for gallery videos added by link
+      { protocol: 'https', hostname: 'i.ytimg.com', pathname: '/vi/**' },
     ],
   },
 }

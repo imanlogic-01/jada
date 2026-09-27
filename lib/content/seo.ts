@@ -5,6 +5,7 @@ import { IMAGE_SRC } from './sections'
 export const SEO_PAGES = [
   { path: '/', label: 'Homepage' },
   { path: '/journal', label: 'Journal' },
+  { path: '/gallery', label: 'Gallery' },
 ] as const
 export type SeoPath = (typeof SEO_PAGES)[number]['path']
 export const isSeoPath = (v: string): v is SeoPath => SEO_PAGES.some((p) => p.path === v)
@@ -21,6 +22,11 @@ export const seoDefaults: Record<SeoPath, SeoInput> = {
     title: 'JADA | Official Website',
     description: 'JADA official artist website. New music, visuals, press, bookings and updates.',
     ogImage: '/media/hero.webp',
+  },
+  '/gallery': {
+    title: 'Gallery | JADA',
+    description: 'Photos and films from JADA: project shoots, behind the scenes and videos.',
+    ogImage: '/media/film-visual-review-02.webp',
   },
   '/journal': {
     title: 'Journal | JADA',

@@ -25,7 +25,7 @@ const required = (max: number) =>
   z.string().trim().min(1, 'Required').max(max, `Keep this under ${max} characters`)
 const optional = (max: number) => z.string().trim().max(max, `Keep this under ${max} characters`)
 const link = z.string().trim().min(1, 'Required').refine(isHttpUrl, 'Enter a full link starting with https://')
-const youtube = z
+export const youtube = z
   .string()
   .trim()
   .transform(youtubeId)
@@ -45,6 +45,15 @@ const detailItem = z.object({ title: required(60), detail: required(200) })
 
 export const sectionSchemas = {
   hero: z.object({ image: imageSchema }),
+  film: z
+    .object({
+      video: z.string().refine((v) => v === '' || IMAGE_SRC.test(v), 'Upload the video again'),
+      youtubeId: youtube,
+      poster: optionalImage,
+      label: optional(60),
+      title: optional(80),
+    })
+    .refine((f) => f.video || f.youtubeId, { path: ['video'], message: 'Upload a video or paste a YouTube link below' }),
   ticker: z.object({ text: required(80), tag: required(30), url: link }),
   about: z.object({
     label: required(60),
@@ -77,14 +86,7 @@ export const sectionSchemas = {
     quoteLabel: required(40),
     quote: required(300),
   }),
-  visuals: z.object({
-    label: required(60),
-    heading: required(40),
-    films: z
-      .array(z.object({ image: imageSchema, tag: required(30), title: required(60), videoId: youtube }))
-      .min(1, 'Add at least one film')
-      .max(12, 'Up to 12 films'),
-  }),
+  visuals: z.object({ label: required(60), heading: required(40), linkLabel: required(30) }),
   journal: z.object({ label: required(40), heading: required(40), intro: required(240), linkLabel: required(30) }),
   press: z.object({
     label: required(40),
@@ -128,6 +130,13 @@ export const isSectionKey = (value: string): value is SectionKey => value in sec
 // Today's site copy. Used to seed the database and as a fallback if a row is missing.
 export const sectionDefaults: Sections = {
   hero: { image: { src: '/media/hero.webp', alt: 'JADA' } },
+  film: {
+    video: '',
+    youtubeId: 'oi8ZUCHzJcc',
+    poster: { src: '/media/film-past-and-present.webp', alt: 'Past & Present album trailer' },
+    label: '',
+    title: '',
+  },
   ticker: { text: "That's What I Like feat. MichaelTheVillain", tag: 'Out now', url: 'https://hypeddit.com/j02cru' },
   about: {
     label: 'JADA · The artist',
@@ -160,15 +169,7 @@ export const sectionDefaults: Sections = {
     quoteLabel: "In JADA's words",
     quote: '“This project represents *growth.* Telling my story in music form has healed me and allowed me to find a new confidence in myself.”',
   },
-  visuals: {
-    label: 'Films · campaign · process',
-    heading: 'Visuals.',
-    films: [
-      { image: { src: '/media/film-past-and-present.webp', alt: 'Past & Present album trailer still' }, tag: 'Album trailer', title: 'Past & Present', videoId: 'oi8ZUCHzJcc' },
-      { image: { src: '/media/film-visual-review-01.webp', alt: 'JADA visual review still' }, tag: 'Visual review 01', title: 'Inside the visual world', videoId: '' },
-      { image: { src: '/media/film-visual-review-02.webp', alt: 'JADA visual review still' }, tag: 'Visual review 02', title: 'Process & movement', videoId: '' },
-    ],
-  },
+  visuals: { label: 'Films · campaign · process', heading: 'Visuals.', linkLabel: 'View the gallery' },
   journal: {
     label: 'From the journal',
     heading: 'Journal.',
@@ -227,6 +228,7 @@ export type FieldDef =
   | { name: string; label: string; kind: 'text' | 'url' | 'email' | 'youtube'; help?: string }
   | { name: string; label: string; kind: 'textarea' | 'heading'; help?: string; rows?: number }
   | { name: string; label: string; kind: 'image'; help?: string; optional?: boolean }
+  | { name: string; label: string; kind: 'video'; help?: string }
   | { name: string; label: string; kind: 'list'; help?: string; itemLabel: string; titleField: string; max: number; min?: number; fields: FieldDef[]; empty: () => Record<string, unknown> }
 
 const HEADING_HELP = 'Wrap words in *asterisks* for gold italics. Press Enter for a new line.'
@@ -238,7 +240,19 @@ const image = (name: string, label: string, help?: string, optional?: boolean): 
 const detailFields = (title: string, detail: string): FieldDef[] => [text('title', title), area('detail', detail, 2)]
 
 export const sectionEditors: { [K in SectionKey]: { title: string; blurb: string; anchor: string; fields: FieldDef[] } } = {
-  hero: { title: 'Hero', blurb: 'The full-screen photo visitors see first.', anchor: '#home', fields: [image('image', 'Hero photo', 'A large landscape or square photo works best, at least 1800px wide.')] },
+  hero: { title: 'Hero', blurb: 'The full-screen photo visitors see first. No text sits on top of it.', anchor: '#home', fields: [image('image', 'Hero photo', 'A large, high-resolution photo works best, at least 1800px wide.')] },
+  film: {
+    title: 'Full-screen video',
+    blurb: 'Plays muted on a loop straight after the hero photo, with a sound button. Upload a video file for the smoothest playback, or use a YouTube link.',
+    anchor: '#film',
+    fields: [
+      { name: 'video', label: 'Video file', kind: 'video', help: 'Short loops work best. In Canva: Share → Download → MP4 Video.' },
+      { name: 'youtubeId', label: 'Or a YouTube video', kind: 'youtube', help: 'Used when no video file is uploaded.' },
+      image('poster', 'Cover image (optional)', 'Shown while the video loads and for visitors who turn off motion.', true),
+      text('label', 'Small label (optional)', 'For example “Past & Present · Album trailer”. Leave empty for no text.'),
+      text('title', 'Title (optional)', 'Leave empty to let the video speak for itself.'),
+    ],
+  },
   ticker: {
     title: 'Release ticker',
     blurb: 'The scrolling strip that promotes the latest release.',
@@ -287,28 +301,9 @@ export const sectionEditors: { [K in SectionKey]: { title: string; blurb: string
   },
   visuals: {
     title: 'Visuals',
-    blurb: 'Film stills and videos. Add a YouTube link to make a still playable.',
+    blurb: 'The homepage row of photos and videos. Add, reorder and caption them in Gallery.',
     anchor: '#visuals',
-    fields: [
-      text('label', 'Small label'),
-      heading('heading', 'Heading'),
-      {
-        name: 'films',
-        label: 'Films',
-        kind: 'list',
-        itemLabel: 'Film',
-        titleField: 'title',
-        min: 1,
-        max: 12,
-        empty: () => ({ image: { src: '', alt: '' }, tag: '', title: '', videoId: '' }),
-        fields: [
-          image('image', 'Still', 'Landscape images work best.'),
-          text('tag', 'Tag', 'Small label in the corner, for example “Album trailer”.'),
-          text('title', 'Title'),
-          { name: 'videoId', label: 'YouTube video (optional)', kind: 'youtube', help: 'Paste the YouTube link to show a play button.' },
-        ],
-      },
-    ],
+    fields: [text('label', 'Small label'), heading('heading', 'Heading'), text('linkLabel', 'Link text', 'Links to the full gallery page.')],
   },
   journal: {
     title: 'Journal panel',

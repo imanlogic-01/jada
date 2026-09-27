@@ -4,8 +4,9 @@ import type { SectionContent } from '@/lib/content/sections'
 import type { PostSummary } from '@/lib/content/queries'
 import { Img, LOGO } from './Img'
 import { HeroImage } from './HeroImage'
-import { FilmRow } from './FilmRow'
+import { GalleryStrip } from './Gallery'
 import { VideoButton } from './Video'
+import type { GalleryRow } from '@/lib/content/gallery'
 import { BookingForm } from './BookingForm'
 import { JoinForm } from './JoinForm'
 
@@ -125,7 +126,8 @@ export function Album({ c }: { c: SectionContent<'album'> }) {
   )
 }
 
-export function Visuals({ c }: { c: SectionContent<'visuals'> }) {
+export function Visuals({ c, items }: { c: SectionContent<'visuals'>; items: GalleryRow[] }) {
+  if (!items.length) return null
   return (
     <section className="visuals" id="visuals" data-panel="Visuals">
       <div className="visuals-head" data-reveal>
@@ -140,22 +142,7 @@ export function Visuals({ c }: { c: SectionContent<'visuals'> }) {
           <span className="only-h">Keep scrolling</span> →
         </span>
       </div>
-      <FilmRow>
-        {c.films.map((film, i) => (
-          <article className="film-card" data-parallax key={i}>
-            <Img image={film.image} sizes="(max-width:900px) 88vw, 75vw" width={1600} height={1000} />
-            <span className="film-meta">{film.tag}</span>
-            {film.videoId && (
-              <VideoButton id={film.videoId} className="play" label={`Play ${film.title}`}>
-                ▶
-              </VideoButton>
-            )}
-            <div className="film-overlay">
-              <h3>{film.title}</h3>
-            </div>
-          </article>
-        ))}
-      </FilmRow>
+      <GalleryStrip items={items} linkLabel={c.linkLabel} />
     </section>
   )
 }

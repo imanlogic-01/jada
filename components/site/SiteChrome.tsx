@@ -1,6 +1,6 @@
 'use client'
 import Image from 'next/image'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { usePathname } from 'next/navigation'
 import type { ImageValue } from '@/lib/content/sections'
 import { LOGO } from './Img'
@@ -9,24 +9,40 @@ const LINKS = [
   ['Home', '/#home'],
   ['Music', '/#music'],
   ['Visuals', '/#visuals'],
+  ['Gallery', '/gallery'],
   ['Journal', '/journal'],
   ['Press', '/#press'],
   ['Book', '/#book'],
   ['Join', '/#join'],
 ] as const
 
-type Props = { feature: ImageValue; caption: string; footLeft: string; socials: string[] }
+type Props = { feature: ImageValue; caption: string; socials: { label: string; url: string }[] }
 
-export function SiteChrome({ feature, caption, footLeft, socials }: Props) {
+/** Name top left (back to home) and a compact drop-down menu top right. */
+export function SiteChrome({ feature, caption, socials }: Props) {
   const [open, setOpen] = useState(false)
   const pathname = usePathname()
+  const panel = useRef<HTMLDivElement>(null)
+  const button = useRef<HTMLButtonElement>(null)
 
   useEffect(() => {
-    document.body.classList.toggle('lock', open)
     if (!open) return
-    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && setOpen(false)
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== 'Escape') return
+      setOpen(false)
+      button.current?.focus()
+    }
+    const onDown = (e: PointerEvent) => {
+      const t = e.target as Node
+      if (!panel.current?.contains(t) && !button.current?.contains(t)) setOpen(false)
+    }
     addEventListener('keydown', onKey)
-    return () => removeEventListener('keydown', onKey)
+    document.addEventListener('pointerdown', onDown)
+    panel.current?.querySelector('a')?.focus({ preventScroll: true })
+    return () => {
+      removeEventListener('keydown', onKey)
+      document.removeEventListener('pointerdown', onDown)
+    }
   }, [open])
 
   // Close the menu whenever the route changes.
@@ -44,34 +60,34 @@ export function SiteChrome({ feature, caption, footLeft, socials }: Props) {
         <a href="/#home" className="brand" aria-label="JADA home">
           <Image src={LOGO.src} alt={LOGO.alt} width={900} height={220} sizes="124px" priority />
         </a>
-        <button className="menu-btn" onClick={() => setOpen(true)} aria-expanded={open} aria-controls="menuOverlay">
-          Menu
+        <button ref={button} className="menu-btn" onClick={() => setOpen((o) => !o)} aria-expanded={open} aria-controls="siteMenu">
+          {open ? 'Close' : 'Menu'}
         </button>
       </header>
-      <div className={`menu-overlay${open ? ' open' : ''}`} id="menuOverlay" aria-hidden={!open} inert={!open}>
-        <div className="menu-head">
-          <Image src={LOGO.src} alt={LOGO.alt} width={900} height={220} sizes="124px" />
-          <button className="close-btn" onClick={() => setOpen(false)}>Close ×</button>
-        </div>
-        <div className="menu-grid">
-          <nav className="menu-links">
-            {LINKS.map(([label, href]) => (
-              <a key={href} href={href} onClick={() => setOpen(false)}>
-                {label}
+      <div className={`dropdown${open ? ' open' : ''}`} id="siteMenu" ref={panel} inert={!open} aria-hidden={!open}>
+        <nav className="dropdown-links" aria-label="Site">
+          {LINKS.map(([label, href], i) => (
+            <a key={href} href={href} onClick={() => setOpen(false)} style={{ '--i': i } as React.CSSProperties}>
+              {label}
+            </a>
+          ))}
+        </nav>
+        {feature.src && (
+          // eslint-disable-next-line @next/next/no-html-link-for-pages -- the homepage handles #section links itself
+          <a className="dropdown-feature" href="/#music" onClick={() => setOpen(false)}>
+            <Image src={feature.src} alt="" width={120} height={120} sizes="56px" />
+            <small>{caption}</small>
+          </a>
+        )}
+        {socials.length > 0 && (
+          <div className="dropdown-socials">
+            {socials.map((s) => (
+              <a key={s.url + s.label} href={s.url} target="_blank" rel="noopener">
+                {s.label}
               </a>
             ))}
-          </nav>
-          {feature.src && (
-            <aside className="menu-feature">
-              <Image src={feature.src} alt={feature.alt} width={940} height={940} sizes="470px" />
-              <small>{caption}</small>
-            </aside>
-          )}
-        </div>
-        <div className="menu-foot">
-          <span>{footLeft}</span>
-          <span>{socials.join(' · ')}</span>
-        </div>
+          </div>
+        )}
       </div>
     </>
   )

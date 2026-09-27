@@ -91,7 +91,7 @@ export function HorizontalScroll({ children }: { children: React.ReactNode }) {
       go(el)
       history.replaceState(null, '', a.hash)
     }
-    const locked = () => document.body.classList.contains('lock') || root.classList.contains('intro-open') || !!document.querySelector('.modal.open')
+    const locked = () => document.body.classList.contains('lock') || root.classList.contains('intro-open') || !!document.querySelector('.modal.open, .lightbox')
     // Sideways trackpad swipes and left/right keys also move the track.
     const onWheel = (e: WheelEvent) => {
       if (!on || locked() || Math.abs(e.deltaX) <= Math.abs(e.deltaY)) return

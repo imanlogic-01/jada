@@ -122,6 +122,20 @@ function FieldInput({ def, path, value, errors, onChange }: InputProps) {
           errors={{ src: errors[`${key}.src`], alt: errors[`${key}.alt`] }}
         />
       )
+    case 'video':
+      return (
+        <ImageField
+          label={def.label}
+          help={def.help}
+          accept="video"
+          withAlt={false}
+          optional
+          folder="sections"
+          value={{ src: String(current ?? ''), alt: '' }}
+          onChange={(v) => onChange(path, v.src)}
+          errors={{ src: errors[key] }}
+        />
+      )
     case 'list':
       return <ListInput def={def} path={path} value={value} errors={errors} onChange={onChange} />
     case 'textarea':

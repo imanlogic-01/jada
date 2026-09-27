@@ -10,7 +10,7 @@ import { SearchPreview } from './PostForm'
 import { focusFirstError } from './SectionForm'
 
 type Pages = Record<SeoPath, SeoInput & { updatedAt: string | null }>
-const LABELS: Record<SeoPath, string> = { '/': 'Homepage', '/journal': 'Journal page' }
+const LABELS: Record<SeoPath, string> = { '/': 'Homepage', '/journal': 'Journal page', '/gallery': 'Gallery page' }
 
 /** Both pages' SEO settings on one screen, saved together. */
 export function SeoForm({ initial }: { initial: Pages }) {

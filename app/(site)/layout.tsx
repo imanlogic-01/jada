@@ -9,7 +9,7 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
   return (
     <VideoProvider>
       <div className="noise" />
-      <SiteChrome feature={release.cover} caption={release.menuCaption} footLeft={`${footer.copyright} · ${footer.note}`} socials={footer.socials.map((s) => s.label)} />
+      <SiteChrome feature={release.cover} caption={release.menuCaption} socials={footer.socials} />
       {children}
       <Reveal />
     </VideoProvider>

@@ -2,8 +2,8 @@
 
 Next.js site with a built-in editor at `/admin`, so content can be updated without touching code.
 
-- **Public site:** the horizontal-scroll homepage, the Journal (`/journal`) and a Book JADA request form. Pages are static and regenerate the moment something is saved in the editor.
-- **Editor (`/admin`):** edit every homepage section, swap images by drag and drop, write Journal posts (drafts and published), manage booking requests, and set SEO and share images per page.
+- **Public site:** a cinematic intro, the horizontal-scroll homepage (hero photo, full-screen muted film, release, visuals and more), the Gallery (`/gallery`), the Journal (`/journal`) and a Book JADA request form. Pages are static and regenerate the moment something is saved in the editor.
+- **Editor (`/admin`):** edit every homepage section, swap images and the film by drag and drop, manage the gallery (bulk photo/video upload, captions, categories, order), write Journal posts (drafts and published), manage booking requests, and set SEO and share images per page.
 - **Stack:** Next.js 16 (App Router) · Clerk (sign-in, one editor account) · Supabase (Postgres + Storage) · Vercel.
 
 ## Environment variables
@@ -18,7 +18,7 @@ Set these in Vercel → Project → Settings → Environment Variables (see `.en
 | `SUPABASE_SERVICE_ROLE_KEY` | Supabase → Project settings → API keys (service_role). Server-only, never expose. |
 | `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`, `CLERK_SECRET_KEY` | Clerk → your app → API keys |
 | `CLERK_ADMIN_USER_ID` | The editor's Clerk user ID (see below) |
-| `NEXT_PUBLIC_BREVO_FORM_ACTION` | Optional. Brevo sign-up form action URL for the mailing list |
+| `NEXT_PUBLIC_BREVO_FORM_ACTION` | The `action` URL from JADA's Brevo subscription form (Brevo → Contacts → Forms → Share → Embed HTML), e.g. `https://…sibforms.com/serve/…` |
 | `RESEND_API_KEY`, `BOOKING_NOTIFY_TO`, `BOOKING_NOTIFY_FROM` | Optional. Emails each booking request to the team via Resend |
 
 ### Making the one editor account
@@ -33,7 +33,7 @@ Migrations live in `supabase/migrations`. They are already applied to the Supaba
 
 - Tables are prefixed `jada_` because the Supabase project is shared.
 - The public key can only read published content (row-level security). Booking requests are private. All writes go through server actions that check the Clerk session first.
-- Images upload straight from the browser to the `jada-media` bucket using one-time signed URLs.
+- Images (up to 8 MB) and videos (MP4/WebM, up to 50 MB, the free-plan limit) upload straight from the browser to the `jada-media` bucket using one-time signed URLs.
 
 `npx tsx scripts/seed-sql.ts > supabase/seed.sql` regenerates the seed from `lib/content/sections.ts`.
 

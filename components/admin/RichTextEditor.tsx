@@ -4,8 +4,8 @@ import { EditorContent, useEditor, type Editor } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import Image from '@tiptap/extension-image'
 import { Placeholder } from '@tiptap/extensions'
-import { IMAGE_TYPES } from '@/lib/content/images'
-import { uploadImage } from './ImageField'
+import { IMAGE_TYPES } from '@/lib/content/media'
+import { uploadFile } from '@/lib/upload'
 
 type Props = { id?: string; value: string; onChange: (html: string) => void; invalid?: boolean; describedBy?: string }
 
@@ -20,7 +20,7 @@ export function RichTextEditor({ id, value, onChange, invalid, describedBy }: Pr
     setUploadError('')
     for (const file of files) {
       setUploading((n) => n + 1)
-      const result = await uploadImage(file, 'journal').catch(() => ({ error: 'Upload failed. Please try again.' }))
+      const result = await uploadFile(file, 'journal', 'image')
       setUploading((n) => n - 1)
       if ('error' in result) {
         setUploadError(result.error)

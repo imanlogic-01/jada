@@ -1,23 +1,11 @@
 'use client'
 import { useId, useRef, useState } from 'react'
-import { createImageUpload } from '@/lib/actions/upload'
-import { browserClient } from '@/lib/supabase/browser'
-import { IMAGE_TYPES, MAX_IMAGE_BYTES } from '@/lib/content/images'
+import { imageSize, uploadFile } from '@/lib/upload'
+import { IMAGE_TYPES, VIDEO_TYPES, type UploadFolder } from '@/lib/content/media'
 import type { ImageValue } from '@/lib/content/sections'
 import { Field } from './ui'
 
-/** Uploads straight to Supabase Storage through a signed URL issued by the server after the admin check. */
-export async function uploadImage(file: File, folder: string): Promise<{ url: string } | { error: string }> {
-  if (!(file.type in IMAGE_TYPES)) return { error: 'Use a JPG, PNG, WebP or AVIF image.' }
-  if (file.size > MAX_IMAGE_BYTES) return { error: `This image is ${(file.size / 1024 / 1024).toFixed(1)} MB. Images must be 8 MB or smaller.` }
-  const ticket = await createImageUpload({ type: file.type, size: file.size, folder })
-  if (!ticket.ok || !ticket.data) return { error: ticket.ok ? 'Upload failed. Please try again.' : ticket.message }
-  const { error } = await browserClient().storage.from('jada-media').uploadToSignedUrl(ticket.data.path, ticket.data.token, file, { contentType: file.type })
-  if (error) return { error: 'Upload failed. Check your connection and try again.' }
-  return { url: ticket.data.publicUrl }
-}
-
-const altFromName = (name: string) =>
+export const altFromName = (name: string) =>
   name
     .replace(/\.[^.]+$/, '')
     .replace(/[-_]+/g, ' ')
@@ -30,27 +18,38 @@ type Props = {
   help?: string
   value: ImageValue
   onChange: (value: ImageValue) => void
-  folder: 'sections' | 'journal' | 'seo'
+  folder: UploadFolder
   errors?: { src?: string; alt?: string }
   optional?: boolean
   withAlt?: boolean
+  /** 'video' turns this into a video picker (MP4/WebM, up to 50 MB) with a progress bar. */
+  accept?: 'image' | 'video'
+  /** Called with the pixel size of a newly uploaded image. */
+  onSize?: (size: { width: number; height: number }) => void
 }
 
-export function ImageField({ label, help, value, onChange, folder, errors = {}, optional, withAlt = true }: Props) {
+export function ImageField({ label, help, value, onChange, folder, errors = {}, optional, withAlt = true, accept = 'image', onSize }: Props) {
   const inputRef = useRef<HTMLInputElement>(null)
   const nameId = useId()
   const [over, setOver] = useState(false)
   const [busy, setBusy] = useState(false)
+  const [progress, setProgress] = useState(0)
   const [uploadError, setUploadError] = useState('')
+  const video = accept === 'video'
 
   const handle = async (file: File | undefined) => {
     if (!file || busy) return
     setUploadError('')
     setBusy(true)
+    setProgress(0)
     try {
-      const result = await uploadImage(file, folder)
+      const size = video ? null : await imageSize(file)
+      const result = await uploadFile(file, folder, accept, setProgress)
       if ('error' in result) setUploadError(result.error)
-      else onChange({ src: result.url, alt: value.alt || altFromName(file.name) })
+      else {
+        onChange({ src: result.url, alt: value.alt || altFromName(file.name) })
+        if (size) onSize?.(size)
+      }
     } catch {
       setUploadError('Upload failed. Check your connection and try again.')
     } finally {
@@ -90,14 +89,25 @@ export function ImageField({ label, help, value, onChange, folder, errors = {}, 
           }}
         >
           {/* eslint-disable-next-line @next/next/no-img-element -- plain preview of any uploaded file */}
-          {value.src && <img src={value.src} alt="" />}
+          {value.src && (video ? <video src={value.src} muted loop autoPlay playsInline /> : <img src={value.src} alt="" />)}
           {!value.src && (
             <span className="drop-hint">
-              <b>Drop an image here</b>
+              <b>Drop {video ? 'a video' : 'an image'} here</b>
               or click to choose
             </span>
           )}
-          <span className="drop-over">{busy ? <span className="spin" /> : value.src ? 'Drop to replace' : 'Choose image'}</span>
+          <span className="drop-over">
+            {busy ? (
+              <span className="drop-progress">
+                <span className="spin" /> {progress > 0 ? `${Math.round(progress * 100)}%` : 'Starting'}
+                <i style={{ transform: `scaleX(${progress})` }} />
+              </span>
+            ) : value.src ? (
+              'Drop to replace'
+            ) : (
+              `Choose ${video ? 'video' : 'image'}`
+            )}
+          </span>
         </div>
         <div className="drop-side">
           {withAlt && (
@@ -115,7 +125,10 @@ export function ImageField({ label, help, value, onChange, folder, errors = {}, 
               </button>
             )}
           </div>
-          <p className="fld-help">{help ? `${help} ` : ''}JPG, PNG, WebP or AVIF up to 8 MB.</p>
+          <p className="fld-help">
+            {help ? `${help} ` : ''}
+            {video ? 'MP4 or WebM up to 50 MB.' : 'JPG, PNG, WebP or AVIF up to 8 MB.'}
+          </p>
           {error && (
             <p className="fld-error" role="alert">
               {error}
@@ -126,7 +139,7 @@ export function ImageField({ label, help, value, onChange, folder, errors = {}, 
       <input
         ref={inputRef}
         type="file"
-        accept={Object.keys(IMAGE_TYPES).join(',')}
+        accept={Object.keys(video ? VIDEO_TYPES : IMAGE_TYPES).join(',')}
         hidden
         onChange={(e) => {
           handle(e.target.files?.[0])

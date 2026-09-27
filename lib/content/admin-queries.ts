@@ -4,6 +4,7 @@ import { sectionDefaults, sectionSchemas, type SectionContent, type SectionKey }
 import { SEO_PAGES, seoDefaults, type SeoInput, type SeoPath } from './seo'
 import type { PostRow } from './posts'
 import type { BookingRow, BookingStatus } from './booking'
+import type { GalleryRow } from './gallery'
 
 // Admin reads use the service-role client. Every caller sits behind the admin layout guard.
 
@@ -18,9 +19,10 @@ const list = <R extends Result>(result: R, what: string): NonNullable<R['data']>
 export async function getSectionForEdit<K extends SectionKey>(key: K): Promise<{ content: SectionContent<K>; updatedAt: string | null }> {
   const row = check(await adminClient().from('jada_sections').select('content, updated_at').eq('key', key).maybeSingle(), 'this section')
   if (!row) return { content: sectionDefaults[key], updatedAt: null }
-  const parsed = sectionSchemas[key].safeParse(row.content)
-  // If stored content no longer matches the schema, start from it merged over the defaults so nothing is lost silently.
-  const content = (parsed.success ? parsed.data : { ...sectionDefaults[key], ...(row.content as object) }) as SectionContent<K>
+  // Stored content is layered over the defaults so fields added later get a sensible starting value.
+  const merged = { ...sectionDefaults[key], ...(row.content as object) }
+  const parsed = sectionSchemas[key].safeParse(merged)
+  const content = (parsed.success ? parsed.data : merged) as SectionContent<K>
   return { content, updatedAt: row.updated_at }
 }
 
@@ -68,4 +70,8 @@ export async function countNewBookings(): Promise<number> {
   const { count, error } = await adminClient().from('jada_bookings').select('id', { count: 'exact', head: true }).eq('status', 'new')
   if (error) throw new Error(`Could not count booking requests: ${error.message}`)
   return count ?? 0
+}
+
+export async function listGallery(): Promise<GalleryRow[]> {
+  return list(await adminClient().from('jada_gallery').select('id, kind, category, image, video_url, youtube_id, caption, alt, width, height, position').order('position'), 'the gallery')
 }
