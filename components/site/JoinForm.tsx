@@ -1,9 +1,7 @@
 'use client'
 import { useState } from 'react'
+import { BREVO_FORM_ACTION } from '@/lib/site/constants'
 import { ArrowUpRight } from './Icon'
-
-// The "action" URL of JADA's Brevo subscription form (Brevo → Contacts → Forms → Share → Embed HTML).
-const BREVO_FORM_ACTION = process.env.NEXT_PUBLIC_BREVO_FORM_ACTION ?? ''
 
 /** Mailing list sign-up. Sends to Brevo in the background and confirms on the page. */
 export function JoinForm({ note, successMessage }: { note: string; successMessage: string }) {
@@ -18,12 +16,6 @@ export function JoinForm({ note, successMessage }: { note: string; successMessag
         e.preventDefault()
         const form = e.currentTarget
         const email = (form.elements.namedItem('EMAIL') as HTMLInputElement).value.trim()
-        if (!BREVO_FORM_ACTION) {
-          // Preview mode until the Brevo form URL is set in the environment.
-          setMessage(successMessage)
-          form.reset()
-          return
-        }
         setSending(true)
         setMessage('Joining…')
         const body = new FormData()

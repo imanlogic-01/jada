@@ -204,11 +204,11 @@ export const sectionDefaults: Sections = {
     successMessage: "Thank you. Your request is with the team and we'll be in touch soon.",
   },
   join: {
-    label: 'JADA direct',
+    label: 'Personal updates from JADA',
     heading: 'Stay\n*close.*',
     body: 'New music, visual releases, live dates and personal updates from JADA. Join the list and stay connected beyond the feed.',
     note: 'Mailing list powered by Brevo. Unsubscribe at any time.',
-    successMessage: "You're on the list. Welcome to JADA's world.",
+    successMessage: "Thank you for signing up to Jada's Mailing List!",
   },
   footer: {
     socials: [
