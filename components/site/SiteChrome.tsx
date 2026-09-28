@@ -58,7 +58,7 @@ export function SiteChrome({ feature, caption, socials }: Props) {
         {/* Plain links for /#section: the homepage scroll engine intercepts them to glide sideways. */}
         {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
         <a href="/#home" className="brand" aria-label="JADA home">
-          <Image src={LOGO.src} alt={LOGO.alt} width={900} height={220} sizes="124px" priority />
+          <Image src={LOGO.src} alt={LOGO.alt} width={1011} height={247} sizes="124px" priority />
         </a>
       </header>
       {/* Outside the header so it can invert against the page behind it and stay visible on any colour. */}

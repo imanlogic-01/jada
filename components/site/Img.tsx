@@ -12,4 +12,4 @@ export function Img({ image, className, sizes, priority, width = 1600, height = 
   return <Image src={image.src} alt={image.alt} width={width} height={height} sizes={sizes} className={className} priority={priority} />
 }
 
-export const LOGO = { src: '/media/jada-logo.png', alt: 'JADA' }
+export const LOGO = { src: '/media/jada-logo.webp', alt: 'JADA' }

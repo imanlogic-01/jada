@@ -18,7 +18,7 @@ export function Sidebar({ newBookings, signOut }: { newBookings: number; signOut
   return (
     <aside className="adm-side">
       <Link className="adm-brand" href="/admin">
-        <Image src="/media/jada-logo.png" alt="JADA" width={900} height={220} sizes="92px" loading="eager" />
+        <Image src="/media/jada-logo.webp" alt="JADA" width={1011} height={247} sizes="92px" loading="eager" />
         <span>Editor</span>
       </Link>
       <nav className="adm-nav" aria-label="Admin">

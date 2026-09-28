@@ -12,7 +12,7 @@ export default async function PanelLayout({ children }: { children: React.ReactN
     return (
       <main className="adm-center">
         <div className="adm-center-inner">
-          <Image src="/media/jada-logo.png" alt="JADA" width={900} height={220} />
+          <Image src="/media/jada-logo.webp" alt="JADA" width={1011} height={247} />
           <h1>No access</h1>
           {state.configured ? (
             <p>This account isn’t the site editor. Sign out and sign in with the editor account.</p>

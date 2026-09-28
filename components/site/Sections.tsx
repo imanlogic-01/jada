@@ -269,7 +269,7 @@ export function Footer({ c }: { c: SectionContent<'footer'> }) {
   return (
     <footer id="contact" data-panel="Contact">
       <div className="foot-top">
-        <Img className="foot-logo" image={LOGO} sizes="340px" width={900} height={220} />
+        <Img className="foot-logo" image={LOGO} sizes="340px" width={1011} height={247} />
         <div className="socials">
           {c.socials.map((s) => (
             <a key={s.url + s.label} href={s.url} {...ext}>

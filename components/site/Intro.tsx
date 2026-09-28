@@ -49,7 +49,7 @@ export function Intro({ hero }: { hero: ImageValue }) {
         <Img image={hero} sizes="100vw" width={1800} height={1800} priority />
       </div>
       <div className="intro-inner">
-        <Image className="intro-logo" src={LOGO.src} alt={LOGO.alt} width={900} height={220} sizes="430px" priority />
+        <Image className="intro-logo" src={LOGO.src} alt={LOGO.alt} width={1011} height={247} sizes="430px" priority />
         <button className="enter" onClick={enter} disabled={!ready}>
           Enter JADA&apos;s World
         </button>

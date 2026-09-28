@@ -131,8 +131,8 @@ export const isSectionKey = (value: string): value is SectionKey => value in sec
 export const sectionDefaults: Sections = {
   hero: { image: { src: '/media/hero.webp', alt: 'JADA' } },
   film: {
-    video: '',
-    youtubeId: 'oi8ZUCHzJcc',
+    video: '/media/past-and-present-trailer.mp4',
+    youtubeId: '',
     poster: { src: '/media/film-past-and-present.webp', alt: 'Past & Present album trailer' },
     label: '',
     title: '',
@@ -151,11 +151,11 @@ export const sectionDefaults: Sections = {
     title: "That's What\nI *Like.*",
     body: 'JADA feat. MichaelTheVillain. Step into the latest chapter through the single, lyric film and visual world surrounding the release.',
     cover: { src: '/media/thats-what-i-like-cover.webp', alt: "That's What I Like cover art" },
-    titleArt: { src: '/media/thats-what-i-like-title.png', alt: "That's What I Like" },
+    titleArt: { src: '/media/thats-what-i-like-title.webp', alt: "That's What I Like" },
     listenLabel: 'Listen now',
     listenUrl: 'https://hypeddit.com/j02cru',
     videoLabel: 'Watch lyric video',
-    videoId: 'NRkt5wpzRXw',
+    videoId: 'oi8ZUCHzJcc',
     menuCaption: "Current release · That's What I Like feat. MichaelTheVillain",
   },
   album: {
@@ -165,7 +165,7 @@ export const sectionDefaults: Sections = {
     linkLabel: 'Explore the project',
     linkUrl: 'https://hypeddit.com/j02cru',
     cover: { src: '/media/past-and-present-cover.webp', alt: 'Past & Present album artwork' },
-    titleArt: { src: '/media/past-and-present-title.png', alt: 'Past & Present' },
+    titleArt: { src: '/media/past-and-present-title.webp', alt: 'Past & Present' },
     quoteLabel: "In JADA's words",
     quote: '“This project represents *growth.* Telling my story in music form has healed me and allowed me to find a new confidence in myself.”',
   },
@@ -181,7 +181,7 @@ export const sectionDefaults: Sections = {
     heading: 'JADA.',
     lead: 'Singer, songwriter, multi-instrumentalist and creative entrepreneur from Hertfordshire, England.',
     body: 'Rooted in powerful vocals, musicianship and a deep love for live performance, JADA creates music and experiences centred around storytelling, emotional connection and creative expression. Her musical journey began in church and has evolved into a multidisciplinary practice combining live music, movement, visual storytelling and audience connection.',
-    image: { src: '/media/jada-portrait.webp', alt: 'JADA press portrait' },
+    image: { src: '/media/press-photo.webp', alt: 'JADA press photo' },
     stats: [
       { title: '5 instruments', detail: 'Voice · Guitar · Bass · Drums · Piano' },
       { title: 'Artist + founder', detail: 'Synapse Recordings' },
