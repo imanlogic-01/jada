@@ -63,7 +63,7 @@ export function SaveBar({ state, onSave, onDiscard, saveLabel = 'Save & publish'
         {children}
         {viewHref && (
           <a className="btn ghost" href={viewHref} target="_blank" rel="noopener">
-            View live ↗
+            View live
           </a>
         )}
         {onDiscard && state.status === 'dirty' && (

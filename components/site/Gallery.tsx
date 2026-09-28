@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { categoryLabel, galleryRatio, galleryThumb, GALLERY_CATEGORIES, type GalleryRow } from '@/lib/content/gallery'
 import { Img } from './Img'
+import { Play } from './Icon'
 
 function Card({ item, onOpen, sizes, parallax }: { item: GalleryRow; onOpen: () => void; sizes: string; parallax?: boolean }) {
   const thumb = galleryThumb(item)
@@ -20,7 +21,7 @@ function Card({ item, onOpen, sizes, parallax }: { item: GalleryRow; onOpen: () 
       <span className="g-meta">{item.kind === 'video' ? 'Video' : categoryLabel(item.category)}</span>
       {item.kind === 'video' && (
         <span className="play" aria-hidden="true">
-          ▶
+          <Play />
         </span>
       )}
       {item.caption && <span className="g-caption">{item.caption}</span>}

@@ -60,10 +60,16 @@ export function SiteChrome({ feature, caption, socials }: Props) {
         <a href="/#home" className="brand" aria-label="JADA home">
           <Image src={LOGO.src} alt={LOGO.alt} width={900} height={220} sizes="124px" priority />
         </a>
-        <button ref={button} className="menu-btn" onClick={() => setOpen((o) => !o)} aria-expanded={open} aria-controls="siteMenu">
-          {open ? 'Close' : 'Menu'}
-        </button>
       </header>
+      {/* Outside the header so it can invert against the page behind it and stay visible on any colour. */}
+      <button ref={button} className="menu-btn" onClick={() => setOpen((o) => !o)} aria-expanded={open} aria-controls="siteMenu">
+        <span className="burger" aria-hidden="true">
+          <i />
+          <i />
+          <i />
+        </span>
+        <span className="sr-only">{open ? 'Close menu' : 'Menu'}</span>
+      </button>
       <div className={`dropdown${open ? ' open' : ''}`} id="siteMenu" ref={panel} inert={!open} aria-hidden={!open}>
         <nav className="dropdown-links" aria-label="Site">
           {LINKS.map(([label, href], i) => (

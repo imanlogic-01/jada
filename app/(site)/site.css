@@ -105,4 +105,15 @@ footer{background:var(--ink);color:var(--cream);padding:40px 5vw 26px}.foot-top{
 .h-mode .h-track .g-row{--row-h:var(--ph);height:var(--ph)}.h-mode .h-track .g-card{min-width:0}
 @media(max-width:900px){.g-grid{columns:2 240px;column-gap:14px}.g-grid .g-card{margin-bottom:14px}.lb-nav{top:auto;bottom:18px;transform:none;width:44px;height:44px}.lightbox{padding:64px 16px 80px}.lb-stage{height:calc(100svh - 144px)}}
 @media(max-width:600px){.g-row{--row-h:52vh}.film{min-height:0;height:78svh}.film-caption h2{font-size:clamp(40px,12vw,64px)}.g-grid{columns:1}.film-sound{bottom:24px}.film-caption{bottom:78px}}
+/* HEADER: gold name top left (back to home), three-line menu icon top right */
+.topbar{mix-blend-mode:normal}.brand img{filter:drop-shadow(0 1px 3px rgba(0,0,0,.22))}
+.menu-btn{position:fixed;z-index:101;top:21px;right:clamp(14px,3.2vw,50px);width:44px;height:44px;padding:0;border:0;border-radius:0;background:transparent;color:#fff;mix-blend-mode:difference;display:grid;place-items:center;pointer-events:auto}.menu-btn:hover{transform:none;background:transparent;color:#fff}
+.burger{position:relative;display:block;width:26px;height:14px}.burger i{position:absolute;left:0;right:0;height:1.5px;background:currentColor;transition:top .45s var(--ease),transform .45s var(--ease),opacity .3s}
+.burger i:nth-child(1){top:0}.burger i:nth-child(2){top:6px;transform-origin:right}.burger i:nth-child(3){top:12px}.menu-btn:hover .burger i:nth-child(2){transform:scaleX(.65)}
+.menu-btn[aria-expanded=true] .burger i:nth-child(1){top:6px;transform:rotate(45deg)}.menu-btn[aria-expanded=true] .burger i:nth-child(2){opacity:0}.menu-btn[aria-expanded=true] .burger i:nth-child(3){top:6px;transform:rotate(-45deg)}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+/* Arrows are drawn, not typed: iPhones turn the ↗ character into a colour emoji. */
+.rule-link::after{content:'';width:9px;height:9px;background:currentColor;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M1.5 8.5l7-7M3.5 1.5h5v5' fill='none' stroke='%23000' stroke-width='1.2'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M1.5 8.5l7-7M3.5 1.5h5v5' fill='none' stroke='%23000' stroke-width='1.2'/%3E%3C/svg%3E") center/contain no-repeat}
+.icon{display:inline-block;vertical-align:middle;flex:0 0 auto}.play .icon{margin-left:3px}.field button .icon{width:24px;height:24px}
+@media(max-width:600px){.menu-btn{top:14px}}
 @media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}}

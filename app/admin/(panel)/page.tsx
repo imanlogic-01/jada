@@ -17,7 +17,7 @@ export default async function Overview() {
           <p>Everything you save here goes live on the site straight away. Journal drafts stay private until you publish them.</p>
         </div>
         <a className="btn ghost" href="/" target="_blank" rel="noopener">
-          View site ↗
+          View site
         </a>
       </header>
 

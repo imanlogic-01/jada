@@ -12,7 +12,7 @@ export default async function GalleryAdminPage() {
           <p>Photos from projects, behind-the-scenes moments and videos. They show in the Visuals row on the homepage and on the gallery page. Changes go live straight away.</p>
         </div>
         <a className="btn ghost" href="/gallery" target="_blank" rel="noopener">
-          View gallery ↗
+          View gallery
         </a>
       </header>
       <GalleryManager items={items} />

@@ -30,7 +30,7 @@ export function Ticker({ c }: { c: SectionContent<'ticker'> }) {
       <div className="ticker-track">
         {Array.from({ length: 6 }, (_, i) => (
           <a key={i} href={c.url} {...ext} aria-hidden={i > 0 || undefined} tabIndex={i > 0 ? -1 : undefined}>
-            {c.text} <span>{c.tag} ↗</span>
+            {c.text} <span>{c.tag}</span>
           </a>
         ))}
       </div>

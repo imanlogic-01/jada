@@ -1,5 +1,6 @@
 'use client'
 import { useState } from 'react'
+import { ArrowUpRight } from './Icon'
 
 // The "action" URL of JADA's Brevo subscription form (Brevo → Contacts → Forms → Share → Embed HTML).
 const BREVO_FORM_ACTION = process.env.NEXT_PUBLIC_BREVO_FORM_ACTION ?? ''
@@ -44,7 +45,7 @@ export function JoinForm({ note, successMessage }: { note: string; successMessag
       <div className="field">
         <input type="email" name="EMAIL" placeholder="Your email address" autoComplete="email" required aria-label="Email address" />
         <button type="submit" aria-label="Join mailing list" disabled={sending}>
-          ↗
+          <ArrowUpRight size={24} />
         </button>
       </div>
       {note && <div className="form-note">{note}</div>}

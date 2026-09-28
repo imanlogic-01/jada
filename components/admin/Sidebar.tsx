@@ -41,7 +41,7 @@ export function Sidebar({ newBookings, signOut }: { newBookings: number; signOut
       </nav>
       <div className="adm-side-foot">
         <a href="/" target="_blank" rel="noopener">
-          View site ↗
+          View site
         </a>
         {signOut}
       </div>
