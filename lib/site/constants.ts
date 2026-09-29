@@ -2,6 +2,12 @@
 export const H_QUERY = '(min-width:901px) and (min-height:600px)'
 export const INTRO_KEY = 'jada-entered'
 
+/** The public address, without a trailing slash. On Vercel it defaults to the production domain. */
+export const SITE_URL = (
+  process.env.NEXT_PUBLIC_SITE_URL ||
+  (process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : 'http://localhost:3000')
+).replace(/\/$/, '')
+
 /** Runs before first paint on the homepage so the right layout and intro state show immediately. */
 export const PRE_PAINT = `(function(){var d=document.documentElement;try{if(!location.hash&&!sessionStorage.getItem('${INTRO_KEY}'))d.classList.add('intro-open')}catch(e){d.classList.add('intro-open')}if(matchMedia('${H_QUERY}').matches)d.classList.add('h-mode')})()`
 

@@ -4,10 +4,12 @@ import { PRE_PAINT } from '@/lib/site/constants'
 import { HorizontalScroll } from '@/components/site/HorizontalScroll'
 import { Intro } from '@/components/site/Intro'
 import { Film } from '@/components/site/Film'
-import { About, Album, Booking, Footer, Hero, Join, JournalPanel, Press, Release, Ticker, Visuals } from '@/components/site/Sections'
+import { About, Album, Booking, Footer, Hero, Join, JournalPanel, Live, Press, Release, Ticker, Visuals } from '@/components/site/Sections'
 
 // Static, and regenerated on demand whenever the admin saves (revalidatePath).
 export const dynamic = 'force-static'
+// Also rebuilt hourly in the background, so shows drop off the list once their day has passed.
+export const revalidate = 3600
 
 export async function generateMetadata(): Promise<Metadata> {
   const seo = await getPageSeo('/')
@@ -32,6 +34,7 @@ export default async function HomePage() {
           <Hero c={s.hero} />
           <Film c={s.film} />
           <Ticker c={s.ticker} />
+          <Live c={s.live} />
           <About c={s.about} />
           <Release c={s.release} />
           <Album c={s.album} />

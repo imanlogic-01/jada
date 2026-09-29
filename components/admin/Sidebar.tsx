@@ -30,13 +30,14 @@ export function Sidebar({ newBookings, signOut }: { newBookings: number; signOut
               Booking requests {newBookings > 0 && <span className="adm-badge" aria-label={`${newBookings} new`}>{newBookings}</span>}
             </>,
           )}
+          {link('/admin/sections/live', 'Live shows')}
           {link('/admin/gallery', 'Gallery')}
           {link('/admin/journal', 'Journal')}
           {link('/admin/seo', 'SEO & sharing')}
         </div>
         <div>
           <span className="adm-label">Homepage</span>
-          {SECTION_KEYS.map((key) => link(`/admin/sections/${key}`, sectionEditors[key].title))}
+          {SECTION_KEYS.filter((key) => key !== 'live').map((key) => link(`/admin/sections/${key}`, sectionEditors[key].title))}
         </div>
       </nav>
       <div className="adm-side-foot">

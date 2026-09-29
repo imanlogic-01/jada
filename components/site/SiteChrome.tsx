@@ -7,6 +7,7 @@ import { LOGO } from './Img'
 
 const LINKS = [
   ['Home', '/#home'],
+  ['Live', '/#live'],
   ['Music', '/#music'],
   ['Visuals', '/#visuals'],
   ['Gallery', '/gallery'],

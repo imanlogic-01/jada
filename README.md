@@ -2,8 +2,8 @@
 
 Next.js site with a built-in editor at `/admin`, so content can be updated without touching code.
 
-- **Public site:** a cinematic intro, the horizontal-scroll homepage (hero photo, full-screen muted film, release, visuals and more), the Gallery (`/gallery`), the Journal (`/journal`) and a Book JADA request form. Pages are static and regenerate the moment something is saved in the editor.
-- **Editor (`/admin`):** edit every homepage section, swap images and the film by drag and drop, manage the gallery (bulk photo/video upload, captions, categories, order), write Journal posts (drafts and published), manage booking requests, and set SEO and share images per page.
+- **Public site:** a cinematic intro, the horizontal-scroll homepage (hero photo, full-screen muted film, upcoming live shows, release, visuals and more), the Gallery (`/gallery`), the Journal (`/journal`) and a Book JADA request form. Pages are static and regenerate the moment something is saved in the editor.
+- **Editor (`/admin`):** list upcoming live shows with dates and ticket links (past shows drop off by themselves), edit every homepage section, swap images and the film by drag and drop, manage the gallery (bulk photo/video upload, captions, categories, order), write Journal posts (drafts and published), manage booking requests, and set SEO and share images per page.
 - **Stack:** Next.js 16 (App Router) · Clerk (sign-in, one editor account) · Supabase (Postgres + Storage) · Vercel.
 
 ## Environment variables
