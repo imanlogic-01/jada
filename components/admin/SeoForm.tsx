@@ -91,7 +91,7 @@ export function SeoForm({ initial }: { initial: Pages }) {
               <h2 id={`seo-${path}`} className="adm-h2" style={{ fontSize: 28, marginBottom: 6 }}>
                 {LABELS[path]}
               </h2>
-              <p className="fld-help">
+              <p className="fld-help" suppressHydrationWarning>
                 {path} · last edited {timeAgo(initial[path].updatedAt).toLowerCase()}
               </p>
             </div>

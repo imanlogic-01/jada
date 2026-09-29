@@ -1,10 +1,12 @@
 import Link from 'next/link'
-import { countNewBookings, getSectionUpdates, listPosts } from '@/lib/content/admin-queries'
+import { countNewBookings, getSectionForEdit, getSectionUpdates, listPosts } from '@/lib/content/admin-queries'
+import { upcomingEvents } from '@/lib/content/live'
 import { timeAgo } from '@/lib/content/format'
 import { SECTION_KEYS, sectionEditors } from '@/lib/content/sections'
 
 export default async function Overview() {
-  const [updates, posts, newBookings] = await Promise.all([getSectionUpdates(), listPosts(), countNewBookings()])
+  const [updates, posts, newBookings, live] = await Promise.all([getSectionUpdates(), listPosts(), countNewBookings(), getSectionForEdit('live')])
+  const upcoming = upcomingEvents(live.content.events).length
   const published = posts.filter((p) => p.status === 'published').length
   const drafts = posts.length - published
 
@@ -26,6 +28,11 @@ export default async function Overview() {
           <span className="adm-label">Booking requests</span>
           <b>{newBookings}</b>
           <span>{newBookings === 1 ? 'new request waiting' : 'new requests waiting'}</span>
+        </Link>
+        <Link className="tile" href="/admin/sections/live">
+          <span className="adm-label">Live shows</span>
+          <b>{upcoming}</b>
+          <span>{upcoming === 1 ? 'upcoming show listed' : 'upcoming shows listed'}</span>
         </Link>
         <Link className="tile" href="/admin/journal">
           <span className="adm-label">Journal</span>

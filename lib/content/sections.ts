@@ -43,6 +43,19 @@ export type ImageValue = z.infer<typeof imageSchema>
 
 const detailItem = z.object({ title: required(60), detail: required(200) })
 
+export const eventItem = z.object({
+  date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Pick the date'),
+  time: z.string().regex(/^(\d{2}:\d{2})?$/, 'Pick a time or leave it empty'),
+  title: required(100),
+  note: optional(120),
+  venue: required(80),
+  city: optional(60),
+  price: optional(40),
+  ticketUrl: z.string().trim().refine((v) => v === '' || isHttpUrl(v), 'Enter a full link starting with https://'),
+  ticketLabel: optional(30),
+})
+export type LiveEvent = z.infer<typeof eventItem>
+
 export const sectionSchemas = {
   hero: z.object({ image: imageSchema }),
   film: z
@@ -55,6 +68,15 @@ export const sectionSchemas = {
     })
     .refine((f) => f.video || f.youtubeId, { path: ['video'], message: 'Upload a video or paste a YouTube link below' }),
   ticker: z.object({ text: required(80), tag: required(30), url: link }),
+  live: z.object({
+    label: required(40),
+    heading: required(60),
+    titleArt: optionalImage,
+    intro: optional(300),
+    poster: optionalImage,
+    events: z.array(eventItem).max(24, 'Up to 24 shows'),
+    emptyMessage: required(200),
+  }),
   about: z.object({
     label: required(60),
     heading: required(80),
@@ -138,6 +160,38 @@ export const sectionDefaults: Sections = {
     title: '',
   },
   ticker: { text: "That's What I Like feat. MichaelTheVillain", tag: 'Out now', url: 'https://hypeddit.com/j02cru' },
+  live: {
+    label: 'Upcoming shows',
+    heading: 'Live *Session*',
+    titleArt: { src: '/media/live-session-title.webp', alt: 'Live Session' },
+    intro: 'Catch JADA live with her all-female band.',
+    poster: { src: '/media/live-poster.webp', alt: 'JADA Live poster with show dates in October and November' },
+    events: [
+      {
+        date: '2026-10-21',
+        time: '20:00',
+        title: 'The Spotlight Lounge',
+        note: 'Live music showcase presented by Accelerando Records',
+        venue: 'The Fabwick',
+        city: 'London',
+        price: 'From £9.38',
+        ticketUrl: 'https://www.eventbrite.co.uk/e/the-spotlight-lounge-live-music-showcase-fabwick-tickets-2002210644937?aff=jada',
+        ticketLabel: 'Tickets',
+      },
+      {
+        date: '2026-11-19',
+        time: '19:00',
+        title: 'JADA: Past & Present – The Album Experience',
+        note: 'Presented by Synapse Recordings',
+        venue: 'The Upper Place',
+        city: 'London',
+        price: 'Free entry',
+        ticketUrl: 'https://www.eventbrite.com/e/jada-past-present-the-album-experience-tickets-2002522977131',
+        ticketLabel: 'Get free tickets',
+      },
+    ],
+    emptyMessage: 'New dates are on the way. Join the mailing list to hear about them first.',
+  },
   about: {
     label: 'JADA · The artist',
     heading: 'Music made\nto be *felt.*',
@@ -225,11 +279,11 @@ export const sectionDefaults: Sections = {
 // ---- Admin form description ----
 
 export type FieldDef =
-  | { name: string; label: string; kind: 'text' | 'url' | 'email' | 'youtube'; help?: string }
+  | { name: string; label: string; kind: 'text' | 'url' | 'email' | 'youtube' | 'date' | 'time'; help?: string }
   | { name: string; label: string; kind: 'textarea' | 'heading'; help?: string; rows?: number }
   | { name: string; label: string; kind: 'image'; help?: string; optional?: boolean }
   | { name: string; label: string; kind: 'video'; help?: string }
-  | { name: string; label: string; kind: 'list'; help?: string; itemLabel: string; titleField: string; max: number; min?: number; fields: FieldDef[]; empty: () => Record<string, unknown> }
+  | { name: string; label: string; kind: 'list'; help?: string; itemLabel: string; titleField: string; metaField?: string; max: number; min?: number; fields: FieldDef[]; empty: () => Record<string, unknown> }
 
 const HEADING_HELP = 'Wrap words in *asterisks* for gold italics. Press Enter for a new line.'
 const heading = (name: string, label: string): FieldDef => ({ name, label, kind: 'heading', help: HEADING_HELP, rows: 2 })
@@ -258,6 +312,41 @@ export const sectionEditors: { [K in SectionKey]: { title: string; blurb: string
     blurb: 'The scrolling strip that promotes the latest release.',
     anchor: '#home',
     fields: [text('text', 'Ticker text'), text('tag', 'Highlight', 'Shown in gold after the text, for example “Out now”.'), url('url', 'Link')],
+  },
+  live: {
+    title: 'Live shows',
+    blurb: 'Upcoming gigs with dates, venues and ticket links. Past shows leave the site on their own the day after.',
+    anchor: '#live',
+    fields: [
+      {
+        name: 'events',
+        label: 'Shows',
+        kind: 'list',
+        itemLabel: 'Show',
+        titleField: 'title',
+        metaField: 'date',
+        max: 24,
+        help: 'Listed on the site in date order. Past shows are hidden automatically, so you can delete them here whenever you like.',
+        empty: () => ({ date: '', time: '', title: '', note: '', venue: '', city: 'London', price: '', ticketUrl: '', ticketLabel: 'Tickets' }),
+        fields: [
+          { name: 'date', label: 'Date', kind: 'date' },
+          { name: 'time', label: 'Start time (optional)', kind: 'time' },
+          text('title', 'Show name'),
+          text('note', 'Extra line (optional)', 'For example “Presented by Accelerando Records”.'),
+          text('venue', 'Venue'),
+          text('city', 'Town or city (optional)'),
+          text('price', 'Price (optional)', 'For example “From £9.38” or “Free entry”.'),
+          url('ticketUrl', 'Ticket link (optional)', 'Eventbrite, Dice or similar. Leave empty if tickets are not on sale yet.'),
+          text('ticketLabel', 'Ticket button text (optional)', 'Defaults to “Tickets”.'),
+        ],
+      },
+      text('label', 'Small label'),
+      image('titleArt', 'Title artwork (optional)', 'A transparent PNG shown as the section title, like the gold “Live Session” lettering.', true),
+      { ...heading('heading', 'Title text'), help: `Shown when there is no title artwork. ${HEADING_HELP}` },
+      area('intro', 'Intro (optional)', 2),
+      image('poster', 'Poster (optional)', 'A flyer or live photo shown beside the list. Portrait works best.', true),
+      area('emptyMessage', 'Message when no shows are listed', 2),
+    ],
   },
   about: {
     title: 'About',

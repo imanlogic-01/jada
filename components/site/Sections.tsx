@@ -9,6 +9,8 @@ import { VideoButton } from './Video'
 import type { GalleryRow } from '@/lib/content/gallery'
 import { BookingForm } from './BookingForm'
 import { JoinForm } from './JoinForm'
+import { eventDay, eventJsonLd, eventTime, upcomingEvents } from '@/lib/content/live'
+import { SITE_URL } from '@/lib/site/constants'
 
 const ext = { target: '_blank', rel: 'noopener' } as const
 
@@ -34,6 +36,71 @@ export function Ticker({ c }: { c: SectionContent<'ticker'> }) {
           </a>
         ))}
       </div>
+    </section>
+  )
+}
+
+export function Live({ c }: { c: SectionContent<'live'> }) {
+  const events = upcomingEvents(c.events)
+  const jsonLd = eventJsonLd(events, c.poster.src, SITE_URL)
+  return (
+    <section className="live" id="live" data-panel="Live">
+      {c.poster.src && (
+        <div className="live-poster" data-reveal>
+          <Img image={c.poster} sizes="(max-width:900px) 100vw, 34vw" width={1080} height={1350} />
+        </div>
+      )}
+      <div className="live-main" data-reveal>
+        <div className="live-head">
+          <span className="section-label">{c.label}</span>
+          <h2 className="display live-title">
+            {c.titleArt.src ? (
+              <Img image={{ src: c.titleArt.src, alt: c.titleArt.alt || plain(c.heading) }} sizes="(max-width:900px) 80vw, 560px" width={742} height={199} />
+            ) : (
+              <Rich text={c.heading} />
+            )}
+          </h2>
+          {c.intro && <p>{c.intro}</p>}
+        </div>
+        {events.length ? (
+          <ol className="live-list">
+            {events.map((e, i) => {
+              const d = eventDay(e.date)
+              const label = e.ticketLabel || 'Tickets'
+              return (
+                <li className="live-row" key={`${e.date}-${i}`}>
+                  <time className="live-date" dateTime={e.time ? `${e.date}T${e.time}` : e.date}>
+                    <b>{d.day}</b>
+                    <span>{d.month}</span>
+                    <small>{d.weekday}</small>
+                  </time>
+                  <div className="live-info">
+                    <h3>{e.title}</h3>
+                    <p>{[e.venue, e.city].filter(Boolean).join(', ')}</p>
+                    {e.note && <p className="live-note">{e.note}</p>}
+                  </div>
+                  <div className="live-meta">
+                    {(e.time || e.price) && <span>{[eventTime(e.time), e.price].filter(Boolean).join(' · ')}</span>}
+                    {e.ticketUrl && (
+                      <a className="rule-link" href={e.ticketUrl} {...ext} aria-label={`${label}: ${e.title}`}>
+                        {label}
+                      </a>
+                    )}
+                  </div>
+                </li>
+              )
+            })}
+          </ol>
+        ) : (
+          <div className="live-empty">
+            <p>{c.emptyMessage}</p>
+            <a className="rule-link" href="#join">
+              Join the mailing list
+            </a>
+          </div>
+        )}
+      </div>
+      {jsonLd.length > 0 && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, '\\u003c') }} />}
     </section>
   )
 }

@@ -6,6 +6,10 @@ import { Rich, timeAgo } from '@/lib/content/format'
 import { sectionEditors, sectionSchemas, youtubeId, type FieldDef, type ImageValue, type SectionKey } from '@/lib/content/sections'
 import { Field, SaveBar, useSaveShortcut, useUnsavedWarning, type SaveState } from './ui'
 import { ImageField } from './ImageField'
+import { eventDay, isPast } from '@/lib/content/live'
+
+/** A show's date in the list header, flagged once it has passed. */
+const listMeta = (date: string) => (/^\d{4}-\d{2}-\d{2}$/.test(date) ? `${eventDay(date).full}${isPast(date) ? ' · past' : ''}` : '')
 
 type Path = (string | number)[]
 type Json = Record<string, unknown>
@@ -164,7 +168,7 @@ function FieldInput({ def, path, value, errors, onChange }: InputProps) {
             <input
               {...p}
               className="inp"
-              type={def.kind === 'url' ? 'url' : def.kind === 'email' ? 'email' : 'text'}
+              type={def.kind === 'url' || def.kind === 'email' || def.kind === 'date' || def.kind === 'time' ? def.kind : 'text'}
               inputMode={def.kind === 'url' ? 'url' : undefined}
               placeholder={def.kind === 'url' ? 'https://' : def.kind === 'youtube' ? 'https://www.youtube.com/watch?v=…' : undefined}
               value={text}
@@ -216,6 +220,7 @@ function ListInput({ def, path, value, errors, onChange }: InputProps & { def: E
             <div className="lst-head">
               <i>{String(i + 1).padStart(2, '0')}</i>
               <b>{String(item[def.titleField] ?? '') || `New ${def.itemLabel.toLowerCase()}`}</b>
+              {def.metaField && item[def.metaField] ? <small className="lst-meta">{listMeta(String(item[def.metaField]))}</small> : null}
               <button type="button" className="icon-btn" aria-label={`Move ${def.itemLabel} ${i + 1} up`} disabled={i === 0} onClick={() => move(i, i - 1)}>
                 ↑
               </button>

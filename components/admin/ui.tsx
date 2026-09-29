@@ -57,7 +57,8 @@ export function SaveBar({ state, onSave, onDiscard, saveLabel = 'Save & publish'
     <div className="savebar" role="region" aria-label="Save changes">
       <div className={`savebar-status ${state.status}`} role="status" aria-live="polite">
         <i />
-        <span>{text}</span>
+        {/* "Edited 1 minute ago" can tick over between the server render and the browser. */}
+        <span suppressHydrationWarning>{text}</span>
       </div>
       <div className="savebar-actions">
         {children}
