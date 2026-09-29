@@ -12,7 +12,6 @@ Set these in Vercel → Project → Settings → Environment Variables (see `.en
 
 | Variable | Where to find it |
 | --- | --- |
-| `NEXT_PUBLIC_SITE_URL` | The live URL, e.g. `https://jada-taupe.vercel.app` |
 | `NEXT_PUBLIC_SUPABASE_URL` | Supabase → Project settings → API |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase → Project settings → API keys (anon / publishable) |
 | `SUPABASE_SERVICE_ROLE_KEY` | Supabase → Project settings → API keys (service_role). Server-only, never expose. |
@@ -20,6 +19,8 @@ Set these in Vercel → Project → Settings → Environment Variables (see `.en
 | `CLERK_ADMIN_USER_ID` | The editor's Clerk user ID (see below) |
 | `NEXT_PUBLIC_BREVO_FORM_ACTION` | Optional. JADA's Brevo form is already built in (`lib/site/constants.ts`); set this only to switch to a different form. The value is the `action` URL from a Brevo subscription form (Brevo → Contacts → Forms → Share → Embed HTML), e.g. `https://…sibforms.com/serve/…` |
 | `RESEND_API_KEY`, `BOOKING_NOTIFY_TO`, `BOOKING_NOTIFY_FROM` | Optional. Emails each booking request to the team via Resend |
+
+The site's address, `https://www.jadaukofficial.com`, is set in `lib/site/constants.ts` and used for the sitemap, canonical links, share images and event data. Visits to `jadaukofficial.com` and `jada-taupe.vercel.app` redirect there (`next.config.ts`).
 
 ### Making the one editor account
 
